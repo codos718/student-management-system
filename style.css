@@ -53,7 +53,7 @@ body {
   gap: 16px;
 }
 
-/* White rounded square icon container - matches screenshot */
+
 .brand-icon {
   width: 52px;
   height: 52px;
@@ -104,7 +104,7 @@ body {
 .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,0.18); }
 .btn:active { transform: scale(0.97); }
 
-/* Export: outlined ghost on blue bg */
+
 .btn-export {
   background: rgba(255,255,255,0.15);
   color: #fff;
@@ -113,7 +113,7 @@ body {
 }
 .btn-export:hover { background: rgba(255,255,255,0.25); }
 
-/* Add Student: solid white with blue text */
+
 .btn-add {
   background: #fff;
   color: #1a73e8;
@@ -153,7 +153,6 @@ body {
   box-shadow: 0 8px 28px rgba(0,0,0,0.11);
 }
 
-/* Icon container — light tinted circle/square */
 .stat-icon {
   width: 40px;
   height: 40px;
@@ -180,12 +179,11 @@ body {
   font-weight: 500;
 }
 
-/* ===== MAIN ===== */
+
 .main {
   padding: 24px 32px 40px;
 }
 
-/* ===== TOOLBAR — single row with search + filter ===== */
 .toolbar {
   display: flex;
   gap: 12px;
@@ -225,7 +223,7 @@ body {
   box-shadow: 0 0 0 3px rgba(26,115,232,0.10);
 }
 
-/* ===== FILTER WRAPPER (inline in toolbar) ===== */
+
 .filter-wrapper {
   position: relative;
   user-select: none;
@@ -273,7 +271,7 @@ body {
   transform: rotate(180deg);
 }
 
-/* Dropdown panel */
+
 .filter-dropdown {
   display: none;
   position: absolute;
@@ -295,7 +293,7 @@ body {
 }
 .filter-dropdown.open { display: block; }
 
-/* Dropdown items */
+
 .filter-item {
   display: flex;
   align-items: center;
@@ -320,7 +318,7 @@ body {
 }
 .filter-item.selected .item-check { opacity: 1; }
 
-/* ===== EMPTY STATE ===== */
+
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -387,7 +385,6 @@ body {
 .badge-red    { background: #fee2e2; color: #991b1b; }
 .badge-yellow { background: #fef3c7; color: #92400e; }
 
-/* ===== MODAL ===== */
 .modal-overlay {
   display: none;
   position: fixed;
@@ -456,7 +453,7 @@ body {
   padding: 24px 28px;
 }
 
-/* Section styling */
+
 .section-group {
   margin-bottom: 28px;
   padding-bottom: 28px;
@@ -539,9 +536,10 @@ body {
   flex: 1;
 }
 
-/* Toggle switch */
+
 .toggle-group {
   margin-top: 12px;
+  margin-bottom: 16px;
 }
 
 .toggle-label {
@@ -550,6 +548,16 @@ body {
   gap: 12px;
   cursor: pointer;
   user-select: none;
+  padding: 12px 13px;
+  background: #fafbfc;
+  border-radius: 10px;
+  border: 1.5px solid #e5e9f0;
+  transition: all 0.2s;
+}
+
+.toggle-label:hover {
+  border-color: #1a73e8;
+  background: #f0f6ff;
 }
 
 .toggle-input {
@@ -559,10 +567,11 @@ body {
 .toggle-slider {
   width: 44px;
   height: 24px;
-  background: #fdfeff;
+  background: #e5e9f0;
   border-radius: 12px;
   position: relative;
   transition: background 0.3s;
+  flex-shrink: 0;
 }
 
 .toggle-slider::before {
@@ -590,9 +599,10 @@ body {
   font-size: 14px;
   font-weight: 500;
   color: #374151;
+  flex-grow: 1;
 }
 
-/* Modal actions */
+
 .modal-actions {
   display: flex;
   gap: 12px;
@@ -607,7 +617,7 @@ body {
   padding: 10px 24px;
 }
 
-/* ===== TOAST ===== */
+
 .toast {
   position: fixed;
   bottom: 28px;
@@ -627,7 +637,6 @@ body {
   animation: popIn 0.3s cubic-bezier(.34,1.56,.64,1) both;
 }
 
-/* ===== ANIMATIONS ===== */
 @keyframes popIn {
   from { transform: scale(0.85); opacity: 0; }
   to   { transform: scale(1);    opacity: 1; }
@@ -653,7 +662,7 @@ body {
   50%       { transform: translateY(-8px); }
 }
 
-/* ===== DELETE BUTTON ===== */
+
 .btn-delete {
   background: #fee2e2;
   color: #991b1b;
@@ -682,6 +691,38 @@ body {
   width: 16px;
   height: 16px;
 }
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+
+.btn-edit {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  padding: 0;
+}
+
+.btn-edit:hover {
+  background: #bae6fd;
+  transform: scale(1.05);
+}
+
+.btn-edit:active {
+  transform: scale(0.95);
+}
+
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {

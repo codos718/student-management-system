@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Total Students — Student Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      color: #1a1a2e;
+    }
+
+   
+    .header {
+      background: linear-gradient(135deg, #1a73e8 0%, #4facfe 100%);
+      padding: 22px 32px 68px;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 200px; height: 200px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 50%;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: 30%;
+      width: 160px; height: 160px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+    .header-brand { display: flex; align-items: center; gap: 16px; }
+    .brand-icon {
+      width: 52px; height: 52px;
+      background: rgba(255,255,255,0.92);
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+      animation: popIn 0.5s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    .brand-text h1 {
+      color: #fff; font-size: 22px; font-weight: 700; letter-spacing: -0.3px;
+      animation: slideInLeft 0.5s 0.1s both;
+    }
+    .brand-text p {
+      color: rgba(255,255,255,0.82); font-size: 13px; margin-top: 3px;
+      animation: slideInLeft 0.5s 0.2s both;
+    }
+    .header-actions {
+      display: flex; gap: 10px; flex-wrap: wrap;
+      animation: slideInRight 0.5s 0.2s both;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 600;
+      cursor: pointer; border: none; display: flex; align-items: center; gap: 8px;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+      font-family: inherit;
+    }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,0.18); }
+    .btn:active { transform: scale(0.97); }
+    .btn-back {
+      background: rgba(255,255,255,0.15); color: #fff;
+      border: 1.5px solid rgba(255,255,255,0.55);
+      backdrop-filter: blur(4px);
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.25); }
+    .btn-export { background: #fff; color: #1a73e8; box-shadow: 0 2px 8px rgba(0,0,0,0.10); }
+    .btn-export:hover { background: #f0f6ff; }
+
+   
+    .stats-row {
+      display: flex; gap: 16px; padding: 0 32px; margin-top: -44px;
+      position: relative; z-index: 10;
+      animation: slideUp 0.55s 0.3s both;
+      flex-wrap: wrap;
+    }
+    .stat-card {
+      flex: 1; min-width: 140px; background: #fff; border-radius: 16px;
+      padding: 20px 18px 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+      display: flex; flex-direction: column; gap: 10px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,0.11); }
+    .stat-icon {
+      width: 40px; height: 40px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .icon-preprimary  { background: #fce4ec; }
+    .icon-primary     { background: #e3f2fd; }
+    .icon-lowersec    { background: #e8f5e9; }
+    .icon-secondary   { background: #fff8e1; }
+    .icon-highersec   { background: #f3e5f5; }
+    .icon-total       { background: #eef2ff; }
+
+    .stat-value { font-size: 28px; font-weight: 700; color: #111827; line-height: 1; }
+    .stat-label { font-size: 12.5px; color: #8a94a6; font-weight: 500; }
+
+    
+    .main { padding: 24px 32px 40px; }
+
+  
+    .tabs-wrap {
+      display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap;
+      animation: slideUp 0.5s 0.4s both;
+    }
+    .tab-btn {
+      padding: 9px 18px; border-radius: 10px; font-size: 13.5px; font-weight: 600;
+      cursor: pointer; border: 1.5px solid #e5e9f0; background: #fff; color: #6b7280;
+      transition: all 0.18s; font-family: inherit; display: flex; align-items: center; gap: 7px;
+    }
+    .tab-btn:hover { border-color: #1a73e8; color: #1a73e8; background: #f0f6ff; }
+    .tab-btn.active {
+      background: #1a73e8; color: #fff; border-color: #1a73e8;
+      box-shadow: 0 2px 10px rgba(26,115,232,0.28);
+    }
+    .tab-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: currentColor; opacity: 0.7;
+    }
+
+    /* ===== SECTION CARD ===== */
+    .section-panel { display: none; }
+    .section-panel.active { display: block; animation: fadeIn 0.35s both; }
+
+    .section-header {
+      display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
+    }
+    .section-badge {
+      padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .badge-preprimary  { background: #fce4ec; color: #c2185b; }
+    .badge-primary     { background: #e3f2fd; color: #1565c0; }
+    .badge-lowersec    { background: #e8f5e9; color: #2e7d32; }
+    .badge-secondary   { background: #fff8e1; color: #f57f17; }
+    .badge-highersec   { background: #f3e5f5; color: #6a1b9a; }
+
+    .section-title { font-size: 17px; font-weight: 700; color: #111827; }
+    .section-sub   { font-size: 13px; color: #8a94a6; margin-left: auto; }
+
+  
+    .grade-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .grade-card {
+      background: #fff; border-radius: 14px; padding: 18px 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      display: flex; flex-direction: column; gap: 8px;
+      border-left: 4px solid transparent;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .grade-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.10); }
+    .gc-preprimary  { border-color: #e91e63; }
+    .gc-primary     { border-color: #1e88e5; }
+    .gc-lowersec    { border-color: #43a047; }
+    .gc-secondary   { border-color: #fb8c00; }
+    .gc-highersec   { border-color: #8e24aa; }
+
+    .grade-name { font-size: 13px; font-weight: 600; color: #374151; }
+    .grade-count {
+      font-size: 32px; font-weight: 700; color: #111827; line-height: 1;
+    }
+    .grade-count span { font-size: 14px; font-weight: 500; color: #8a94a6; }
+    .grade-bar-wrap { height: 5px; background: #f0f2f5; border-radius: 10px; margin-top: 4px; }
+    .grade-bar { height: 100%; border-radius: 10px; transition: width 0.8s ease; }
+
+    /* ===== TABLE ===== */
+    .data-table {
+      width: 100%; border-collapse: collapse; background: #fff;
+      border-radius: 14px; overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+      margin-top: 22px;
+    }
+    .data-table th {
+      text-align: left; padding: 12px 16px; font-size: 11.5px; font-weight: 600;
+      color: #8a94a6; text-transform: uppercase; letter-spacing: 0.05em;
+      border-bottom: 1.5px solid #f0f2f5; background: #fff; white-space: nowrap;
+    }
+    .data-table td {
+      padding: 13px 16px; font-size: 13.5px; color: #374151;
+      border-bottom: 1px solid #f5f6f8; transition: background 0.15s;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: #fafbfc; }
+
+    .toast {
+      position: fixed; bottom: 28px; right: 28px;
+      background: #1a73e8; color: #fff; padding: 12px 22px;
+      border-radius: 12px; font-size: 13.5px; font-weight: 500;
+      box-shadow: 0 6px 24px rgba(26,115,232,0.38);
+      display: none; z-index: 200;
+    }
+    .toast.show { display: block; animation: popIn 0.3s cubic-bezier(.34,1.56,.64,1) both; }
+
+  
+    @keyframes popIn {
+      from { transform: scale(0.85); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+    @keyframes slideInLeft {
+      from { transform: translateX(-18px); opacity: 0; }
+      to   { transform: translateX(0);     opacity: 1; }
+    }
+    @keyframes slideInRight {
+      from { transform: translateX(18px); opacity: 0; }
+      to   { transform: translateX(0);    opacity: 1; }
+    }
+    @keyframes slideUp {
+      from { transform: translateY(22px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .header { padding: 18px 18px 60px; }
+      .stats-row { padding: 0 18px; margin-top: -38px; gap: 10px; }
+      .stat-card { min-width: calc(50% - 10px); }
+      .stat-value { font-size: 22px; }
+      .main { padding: 18px 18px 32px; }
+      .grade-cards { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 520px) {
+      .brand-text h1 { font-size: 18px; }
+      .grade-cards { grid-template-columns: 1fr; }
+      .tabs-wrap { gap: 6px; }
+      .tab-btn { padding: 8px 13px; font-size: 12.5px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div class="header-brand">
+        <div class="brand-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1a73e8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>Student Management</h1>
+          <p>Total Students — Level &amp; Subject Breakdown</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-back" onclick="window.location.href='index.html'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+          Back
+        </button>
+        <button class="btn btn-export" onclick="exportCSV()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Export
+        </button>
+      </div>
+    </div>
+  </div>
+
+ 
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon icon-preprimary">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e91e63" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>
+        </svg>
+      </div>
+      <div class="stat-value" id="statPrePrimary">0</div>
+      <div class="stat-label">Pre-Primary</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon icon-primary">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1e88e5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+        </svg>
+      </div>
+      <div class="stat-value" id="statPrimary">0</div>
+      <div class="stat-label">Primary</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon icon-lowersec">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#43a047" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+        </svg>
+      </div>
+      <div class="stat-value" id="statLowerSec">0</div>
+      <div class="stat-label">Lower Secondary</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon icon-secondary">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fb8c00" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+        </svg>
+      </div>
+      <div class="stat-value" id="statSecondary">0</div>
+      <div class="stat-label">Secondary</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon icon-highersec">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8e24aa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+        </svg>
+      </div>
+      <div class="stat-value" id="statHigherSec">0</div>
+      <div class="stat-label">Higher Secondary</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon icon-total">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4f83f1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div class="stat-value" id="statTotal">0</div>
+      <div class="stat-label">Grand Total</div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- TABS -->
+    <div class="tabs-wrap">
+      <button class="tab-btn active" onclick="switchTab('preprimary', this)">
+        <span class="tab-dot" style="background:#e91e63"></span> Pre-Primary
+      </button>
+      <button class="tab-btn" onclick="switchTab('primary', this)">
+        <span class="tab-dot" style="background:#1e88e5"></span> Primary
+      </button>
+      <button class="tab-btn" onclick="switchTab('lowersec', this)">
+        <span class="tab-dot" style="background:#43a047"></span> Lower Secondary
+      </button>
+      <button class="tab-btn" onclick="switchTab('secondary', this)">
+        <span class="tab-dot" style="background:#fb8c00"></span> Secondary
+      </button>
+      <button class="tab-btn" onclick="switchTab('highersec', this)">
+        <span class="tab-dot" style="background:#8e24aa"></span> Higher Secondary
+      </button>
+    </div>
+
+    <!-- ======== PRE-PRIMARY ======== -->
+    <div class="section-panel active" id="panel-preprimary">
+      <div class="section-header">
+        <span class="section-badge badge-preprimary">Pre-Primary</span>
+        <span class="section-title">Nursery — UKG</span>
+        <span class="section-sub" id="sub-preprimary">0 students</span>
+      </div>
+      <div class="grade-cards" id="gc-preprimary"></div>
+      <table class="data-table">
+        <thead><tr>
+          <th>Class</th><th>Boys</th><th>Girls</th><th>Total</th><th>Class Teacher</th><th>Room</th>
+        </tr></thead>
+        <tbody id="tb-preprimary"></tbody>
+      </table>
+    </div>
+
+    <!-- ======== PRIMARY ======== -->
+    <div class="section-panel" id="panel-primary">
+      <div class="section-header">
+        <span class="section-badge badge-primary">Primary</span>
+        <span class="section-title">Grade 1 — Grade 5</span>
+        <span class="section-sub" id="sub-primary">0 students</span>
+      </div>
+      <div class="grade-cards" id="gc-primary"></div>
+      <table class="data-table">
+        <thead><tr>
+          <th>Grade</th><th>Boys</th><th>Girls</th><th>Total</th><th>Class Teacher</th><th>Room</th>
+        </tr></thead>
+        <tbody id="tb-primary"></tbody>
+      </table>
+    </div>
+
+    <!-- ======== LOWER SECONDARY ======== -->
+    <div class="section-panel" id="panel-lowersec">
+      <div class="section-header">
+        <span class="section-badge badge-lowersec">Lower Secondary</span>
+        <span class="section-title">Grade 6 — Grade 8</span>
+        <span class="section-sub" id="sub-lowersec">0 students</span>
+      </div>
+      <div class="grade-cards" id="gc-lowersec"></div>
+      <table class="data-table">
+        <thead><tr>
+          <th>Grade</th><th>Boys</th><th>Girls</th><th>Total</th><th>Class Teacher</th><th>Room</th>
+        </tr></thead>
+        <tbody id="tb-lowersec"></tbody>
+      </table>
+    </div>
+
+    <!-- ======== SECONDARY ======== -->
+    <div class="section-panel" id="panel-secondary">
+      <div class="section-header">
+        <span class="section-badge badge-secondary">Secondary</span>
+        <span class="section-title">Grade 9 — Grade 10</span>
+        <span class="section-sub" id="sub-secondary">0 students</span>
+      </div>
+      <div class="grade-cards" id="gc-secondary"></div>
+      <table class="data-table">
+        <thead><tr>
+          <th>Grade</th><th>Boys</th><th>Girls</th><th>Total</th><th>Class Teacher</th><th>Room</th>
+        </tr></thead>
+        <tbody id="tb-secondary"></tbody>
+      </table>
+    </div>
+
+    <!-- ======== HIGHER SECONDARY ======== -->
+    <div class="section-panel" id="panel-highersec">
+      <div class="section-header">
+        <span class="section-badge badge-highersec">Higher Secondary</span>
+        <span class="section-title">Grade 11 — Grade 12</span>
+        <span class="section-sub" id="sub-highersec">0 students</span>
+      </div>
+      <div class="grade-cards" id="gc-highersec"></div>
+      <table class="data-table">
+        <thead><tr>
+          <th>Grade</th><th>Boys</th><th>Girls</th><th>Total</th><th>Class Teacher</th><th>Room</th>
+        </tr></thead>
+        <tbody id="tb-highersec"></tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast">✅ Exported successfully!</div>
+
+  <script>
+    
+    function getGenderFromName(name) {
+      if (!name) return 'boy';
+      const lastChar = name.toLowerCase().charAt(name.length - 1);
+      const girlNames = ['a', 'i', 'y', 'e'];
+      return girlNames.includes(lastChar) ? 'girl' : 'boy';
+    }
+
+   
+    const CLASS_MAPPING = {
+      'Nursery': 'preprimary',
+      'LKG': 'preprimary',
+      'UKG': 'preprimary',
+      'Class 1': 'primary',
+      'Class 2': 'primary',
+      'Class 3': 'primary',
+      'Class 4': 'primary',
+      'Class 5': 'primary',
+      'Class 6': 'lowersec',
+      'Class 7': 'lowersec',
+      'Class 8': 'lowersec',
+      'Class 9': 'secondary',
+      'Class 10': 'secondary',
+      'Class 11': 'highersec',
+      'Class 12': 'highersec'
+    };
+
+    // ===== DATA ===== 
+    const DATA = {
+      preprimary: {
+        color: '#e91e63',
+        colorLight: '#fce4ec',
+        gcClass: 'gc-preprimary',
+        grades: [
+          { name: 'Nursery', boys: 0, girls: 0, teacher: '', room: 'R-01' },
+          { name: 'LKG', boys: 0, girls: 0, teacher: '', room: 'R-02' },
+          { name: 'UKG', boys: 0, girls: 0, teacher: '', room: 'R-03' },
+        ]
+      },
+      primary: {
+        color: '#1e88e5',
+        colorLight: '#e3f2fd',
+        gcClass: 'gc-primary',
+        grades: [
+          { name: 'Class 1', boys: 0, girls: 0, teacher: '', room: 'R-04' },
+          { name: 'Class 2', boys: 0, girls: 0, teacher: '', room: 'R-05' },
+          { name: 'Class 3', boys: 0, girls: 0, teacher: '', room: 'R-06' },
+          { name: 'Class 4', boys: 0, girls: 0, teacher: '', room: 'R-07' },
+          { name: 'Class 5', boys: 0, girls: 0, teacher: '', room: 'R-08' },
+        ]
+      },
+      lowersec: {
+        color: '#43a047',
+        colorLight: '#e8f5e9',
+        gcClass: 'gc-lowersec',
+        grades: [
+          { name: 'Class 6', boys: 0, girls: 0, teacher: '', room: 'R-09' },
+          { name: 'Class 7', boys: 0, girls: 0, teacher: '', room: 'R-10' },
+          { name: 'Class 8', boys: 0, girls: 0, teacher: '', room: 'R-11' },
+        ]
+      },
+      secondary: {
+        color: '#fb8c00',
+        colorLight: '#fff8e1',
+        gcClass: 'gc-secondary',
+        grades: [
+          { name: 'Class 9', boys: 0, girls: 0, teacher: '', room: 'R-12' },
+          { name: 'Class 10', boys: 0, girls: 0, teacher: '', room: 'R-13' },
+        ]
+      },
+      highersec: {
+        color: '#8e24aa',
+        colorLight: '#f3e5f5',
+        gcClass: 'gc-highersec',
+        grades: [
+          { name: 'Class 11', boys: 0, girls: 0, teacher: '', room: 'R-14' },
+          { name: 'Class 12', boys: 0, girls: 0, teacher: '', room: 'R-15' },
+        ]
+      }
+    };
+
+    
+    function getStudentsFromLocalStorage() {
+      const stored = localStorage.getItem('students');
+      return stored ? JSON.parse(stored) : [];
+    }
+
+    
+    function updateRealStats() {
+      const students = getStudentsFromLocalStorage();
+      
+   
+      Object.keys(DATA).forEach(level => {
+        DATA[level].grades.forEach(grade => {
+          grade.boys = 0;
+          grade.girls = 0;
+        });
+      });
+
+     
+      students.forEach(student => {
+        const level = CLASS_MAPPING[student.cls];
+        if (level && DATA[level]) {
+          const grade = DATA[level].grades.find(g => g.name === student.cls);
+          if (grade) {
+            
+            const isFemale = getGenderFromName(student.name) === 'girl';
+            if (isFemale) {
+              grade.girls++;
+            } else {
+              grade.boys++;
+            }
+          }
+        }
+      });
+
+      // Update stat cards
+      const prePrimaryTotal = DATA.preprimary.grades.reduce((sum, g) => sum + g.boys + g.girls, 0);
+      const primaryTotal = DATA.primary.grades.reduce((sum, g) => sum + g.boys + g.girls, 0);
+      const lowerSecTotal = DATA.lowersec.grades.reduce((sum, g) => sum + g.boys + g.girls, 0);
+      const secondaryTotal = DATA.secondary.grades.reduce((sum, g) => sum + g.boys + g.girls, 0);
+      const higherSecTotal = DATA.highersec.grades.reduce((sum, g) => sum + g.boys + g.girls, 0);
+      const grandTotal = prePrimaryTotal + primaryTotal + lowerSecTotal + secondaryTotal + higherSecTotal;
+
+      document.getElementById('statPrePrimary').textContent = prePrimaryTotal;
+      document.getElementById('statPrimary').textContent = primaryTotal;
+      document.getElementById('statLowerSec').textContent = lowerSecTotal;
+      document.getElementById('statSecondary').textContent = secondaryTotal;
+      document.getElementById('statHigherSec').textContent = higherSecTotal;
+      document.getElementById('statTotal').textContent = grandTotal;
+
+      document.getElementById('sub-preprimary').textContent = `${prePrimaryTotal} students`;
+      document.getElementById('sub-primary').textContent = `${primaryTotal} students`;
+      document.getElementById('sub-lowersec').textContent = `${lowerSecTotal} students`;
+      document.getElementById('sub-secondary').textContent = `${secondaryTotal} students`;
+      document.getElementById('sub-highersec').textContent = `${higherSecTotal} students`;
+    }
+
+
+    function switchTab(id, btn) {
+      document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('panel-' + id).classList.add('active');
+      btn.classList.add('active');
+    }
+
+  
+    function renderGradeCards(key) {
+      const d = DATA[key];
+      const grades = d.grades;
+      const maxTotal = Math.max(...grades.map(g => g.boys + g.girls), 1);
+      const container = document.getElementById('gc-' + key);
+      container.innerHTML = '';
+      grades.forEach(g => {
+        const total = g.boys + g.girls;
+        const pct = total > 0 ? Math.round((total / maxTotal) * 100) : 0;
+        const card = document.createElement('div');
+        card.className = 'grade-card ' + d.gcClass;
+        card.innerHTML = `
+          <div class="grade-name">${g.name}</div>
+          <div class="grade-count">${total} <span>students</span></div>
+          <div style="display:flex;gap:8px;font-size:12px;color:#8a94a6;">
+            <span>👦 ${g.boys}</span> &nbsp; <span>👧 ${g.girls}</span>
+          </div>
+          <div class="grade-bar-wrap">
+            <div class="grade-bar" style="width:${pct}%;background:${d.color}"></div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    //  RENDER TABLE 
+    function renderTable(key) {
+      const d = DATA[key];
+      const tbody = document.getElementById('tb-' + key);
+      
+      tbody.innerHTML = d.grades.map(g => {
+        const total = g.boys + g.girls;
+        return `<tr>
+          <td><b>${g.name}</b></td>
+          <td>${g.boys}</td>
+          <td>${g.girls}</td>
+          <td><b>${total}</b></td>
+          <td>${g.teacher}</td>
+          <td>${g.room}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    // ===== EXPORT ===== 
+    function exportCSV() {
+      const rows = [['Level', 'Grade/Class', 'Boys', 'Girls', 'Total']];
+      const levels = { preprimary: 'Pre-Primary', primary: 'Primary', lowersec: 'Lower Secondary', secondary: 'Secondary', highersec: 'Higher Secondary' };
+      Object.entries(DATA).forEach(([key, d]) => {
+        d.grades.forEach(g => {
+          rows.push([
+            levels[key],
+            g.name,
+            g.boys,
+            g.girls,
+            g.boys + g.girls,
+          ]);
+        });
+      });
+      const csv = rows.map(r => r.map(cell => `"${cell}"`).join(',')).join('\n');
+      const a = document.createElement('a');
+      a.href = 'data:text/csv,' + encodeURIComponent(csv);
+      a.download = 'total_students.csv';
+      a.click();
+      const t = document.getElementById('toast');
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    
+    function initPage() {
+      updateRealStats();
+      ['preprimary', 'primary', 'lowersec', 'secondary', 'highersec'].forEach(key => {
+        renderGradeCards(key);
+        renderTable(key);
+      });
+      
+      setTimeout(() => {
+        document.querySelectorAll('.grade-bar').forEach(el => {
+          const w = el.style.width;
+          el.style.width = '0';
+          requestAnimationFrame(() => { el.style.width = w; });
+        });
+      }, 100);
+    }
+
+  
+    initPage();
+
+    // ===== LISTEN FOR STORAGE CHANGES ===== 
+    window.addEventListener('storage', () => {
+      initPage();
+    });
+  </script>
+</body>
+</html>

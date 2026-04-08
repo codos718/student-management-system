@@ -1,6 +1,7 @@
 // ==== STATE ====
 let students = [];
 let currentFilter = 'All Classes';
+let editingIndex = null;
 
 // ==== LOCALSTORAGE ====
 function loadStudentsFromLocalStorage() {
@@ -28,6 +29,20 @@ function openModal() {
 function closeModal() {
   document.getElementById('modalOverlay').classList.remove('open');
   clearForm();
+  setEditMode(false);
+}
+
+function setEditMode(isEdit) {
+  const title = document.getElementById('modalTitle');
+  const btn = document.getElementById('saveBtn');
+  if (isEdit) {
+    title.textContent = 'Edit Student';
+    btn.textContent = 'Update Student';
+  } else {
+    title.textContent = 'Add New Student';
+    btn.textContent = 'Add Student';
+    editingIndex = null;
+  }
 }
 
 function clearForm() {
@@ -52,7 +67,7 @@ function clearForm() {
   document.getElementById('fScholar').checked = false;
 }
 
-// ==== ADD STUDENT ====
+// ==== ADD / UPDATE STUDENT ====
 function addStudent() {
   const name = document.getElementById('fName').value.trim();
   const roll = document.getElementById('fRoll').value.trim();
@@ -80,17 +95,54 @@ function addStudent() {
   const parentName = document.getElementById('fParentName').value.trim();
   const contactNum = document.getElementById('fContactNumber').value.trim();
 
-  students.push({
+  const data = {
     name, roll, cls, email, permAddr, tempAddr, marks, grades, subjects,
     projects, futureGoals, attend, feesStatus, scholar, bloodGroup,
     healthCond, hobbies, parentName, contactNum
-  });
-  
+  };
+
+  if (editingIndex !== null) {
+    students[editingIndex] = data;
+    showToast('✅ Student updated successfully!');
+  } else {
+    students.push(data);
+    showToast('✅ Student added successfully!');
+  }
+
   saveStudentsToLocalStorage();
   closeModal();
   renderTable();
   updateStats();
-  showToast();
+}
+
+// ==== EDIT STUDENT ====
+function editStudent(index) {
+  if (index < 0 || index >= students.length) return;
+  const s = students[index];
+  editingIndex = index;
+  setEditMode(true);
+
+  document.getElementById('fName').value = s.name || '';
+  document.getElementById('fRoll').value = s.roll || '';
+  document.getElementById('fEmail').value = s.email || '';
+  document.getElementById('fPermanentAddr').value = s.permAddr || '';
+  document.getElementById('fTemporaryAddr').value = s.tempAddr || '';
+  document.getElementById('fMarks').value = s.marks || '';
+  document.getElementById('fSubjects').value = s.subjects || '';
+  document.getElementById('fProjects').value = s.projects || '';
+  document.getElementById('fFutureGoals').value = s.futureGoals || '';
+  document.getElementById('fAttend').value = s.attend || '';
+  document.getElementById('fHealthCondition').value = s.healthCond || '';
+  document.getElementById('fHobbies').value = s.hobbies || '';
+  document.getElementById('fParentName').value = s.parentName || '';
+  document.getElementById('fContactNumber').value = s.contactNum || '';
+  document.getElementById('fClass').value = s.cls || 'Nursery';
+  document.getElementById('fGrades').value = s.grades || 'A+';
+  document.getElementById('fFeesStatus').value = s.feesStatus || 'Unpaid';
+  document.getElementById('fBloodGroup').value = s.bloodGroup || 'O+';
+  document.getElementById('fScholar').checked = s.scholar === 'Yes';
+
+  openModal();
 }
 
 // ==== RENDER TABLE ====
@@ -114,16 +166,23 @@ function renderTable() {
         <td>${s.attend}%</td>
         <td><span class="badge ${s.scholar === 'Yes' ? 'badge-green' : 'badge-red'}">${s.scholar}</span></td>
         <td>${s.feesStatus}</td>
-        <td><button class="btn-delete" onclick="deleteStudent(${idx})" title="Delete">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="3 6 5 6 21 6"></polyline>
-            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-            <line x1="10" y1="11" x2="10" y2="17"></line>
-            <line x1="14" y1="11" x2="14" y2="17"></line>
-          </svg>
-        </button></td>
+        <td>
+          <button class="btn-edit" onclick="editStudent(${idx})" title="Edit">
+            ✏️
+          </button>
+          <button class="btn-delete" onclick="deleteStudent(${idx})" title="Delete">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              <line x1="10" y1="11" x2="10" y2="17"></line>
+              <line x1="14" y1="11" x2="14" y2="17"></line>
+            </svg>
+          </button>
+        </td>
       </tr>
-    `;
+    `
+  
+    ;
   }).join('');
 
   const empty = document.getElementById('emptyState');
@@ -136,8 +195,6 @@ function renderTable() {
     table.style.display = 'table';
   }
 }
-
-
 
 // ==== DELETE STUDENT ====
 function deleteStudent(index) {
@@ -169,16 +226,16 @@ function filterStudents() {
 }
 
 // ==== TOASTS ====
-function showToast() {
+function showToast(msg) {
   const toast = document.getElementById('toast');
-  toast.textContent = '✅ Student added successfully!';
+  toast.textContent = msg || ' Student added successfully!';
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
 function showDeleteToast() {
   const toast = document.getElementById('toast');
-  toast.textContent = '🗑️ Student deleted successfully!';
+  toast.textContent = ' Student deleted successfully!';
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 3000);
 }
@@ -215,7 +272,6 @@ function buildFilterDropdown() {
   
   dropdown.innerHTML = '';
   
-  // Add "All Classes"
   const allDiv = document.createElement('div');
   allDiv.className = 'filter-item selected';
   allDiv.innerHTML = `
@@ -229,7 +285,6 @@ function buildFilterDropdown() {
   allDiv.onclick = () => selectFilter('All Classes', allDiv);
   dropdown.appendChild(allDiv);
   
-  // Add all classes
   CLASSES.forEach(cls => {
     const div = document.createElement('div');
     div.className = 'filter-item';
@@ -273,7 +328,6 @@ function closeFilterDropdown() {
   dropdown.classList.remove('open');
 }
 
-// ==== FILTER DROPDOWN EVENTS ====
 document.addEventListener('DOMContentLoaded', function() {
   const trigger = document.getElementById('filterTrigger');
   const wrapper = document.getElementById('filterWrapper');
